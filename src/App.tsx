@@ -1,23 +1,27 @@
-// src/App.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { getHistoricalExchangeRates } from './api';
 
+interface ExchangeRate {
+  date: string;
+  EGP: number;
+  CAD: number;
+}
+
 function App() {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [dates, setDates] = useState([]);
-  const targetCurrencies = ["EGP", "CAD"];
-  const [exchangeRates, setExchangeRates] = useState<{ [key: string]: number }[]>([]);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const targetCurrencies: string[] = ["EGP", "CAD"];
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
 
   useEffect(() => {
     if (startDate && endDate) {
-      const generateDateRange = (start, end) => {
-        const dateArray = [];
-        let currentDate = new Date(start);
+      const generateDateRange = (start: string, end: string): string[] => {
+        const dateArray: string[] = [];
+        const currentDate = new Date(start);
 
         while (currentDate <= new Date(end)) {
-          dateArray.push(new Date(currentDate).toISOString().split('T')[0]);
+          dateArray.push(currentDate.toISOString().split('T')[0]);
           currentDate.setDate(currentDate.getDate() + 1);
         }
 
@@ -27,11 +31,10 @@ function App() {
       const fetchExchangeRates = async () => {
         try {
           const dateRange = generateDateRange(startDate, endDate);
-          setDates(dateRange);
 
           const exchangeRatesPromises = dateRange.map(async (date) => {
             const rates = await getHistoricalExchangeRates("USD", targetCurrencies, date);
-            return { date, ...rates };
+            return { date, ...rates } as ExchangeRate;
           });
 
           const resolvedExchangeRates = await Promise.all(exchangeRatesPromises);
