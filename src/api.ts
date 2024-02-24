@@ -1,10 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 
 const API_KEY = "f1a76583ccde513b0d830566";
-const BASE_URL = "https://open.er-api.com/v6/";
+const BASE_URL = "https://v6.exchangerate-api.com/v6";
 
 interface ExchangeRatesResponse {
-  rates: { [key: string]: number };
+  conversion_rates: { [key: string]: number };
 }
 
 export const getHistoricalExchangeRates = async (
@@ -14,10 +14,10 @@ export const getHistoricalExchangeRates = async (
 ): Promise<{ [key: string]: number }> => {
   try {
     const response: AxiosResponse<ExchangeRatesResponse> = await axios.get(
-      `${BASE_URL}historical/${date}/${baseCurrency}?apikey=${API_KEY}`
+      `${BASE_URL}/${API_KEY}/history/${baseCurrency}/${date}`
     );
 
-    const rates = response.data.rates;
+    const rates = response.data.conversion_rates;
 
     const exchangeRates = targetCurrencies.reduce(
       (result: { [key: string]: number }, currency: string) => {
@@ -29,7 +29,6 @@ export const getHistoricalExchangeRates = async (
 
     return exchangeRates;
   } catch (error) {
-    // Log or handle the error appropriately
     console.error("Error fetching historical exchange rates:", error);
     throw error;
   }

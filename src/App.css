@@ -11,12 +11,18 @@
 .container h1 {
   color: #445d48;
   font-weight: bold;
+  text-align: center;
+  text-wrap: wrap;
+  padding: 1rem;
 }
 
 .container form {
   display: flex;
-  gap: 3rem;
+  gap: 2rem;
   margin-top: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .container form .input-group {
@@ -43,7 +49,7 @@
   border-collapse: collapse;
   border: 2px solid #fde5d4;
   letter-spacing: 1px;
-  width: 75%;
+  width: 85%;
 }
 
 .container table caption {

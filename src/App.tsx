@@ -11,17 +11,19 @@ interface ExchangeRate {
 function App() {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const formateStartDate = startDate.split('-').join('/');
+  const formattedEndDate = endDate.split('-').join('/');
   const targetCurrencies: string[] = ["EGP", "CAD"];
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
 
   useEffect(() => {
-    if (startDate && endDate) {
+    if (formateStartDate && formattedEndDate) {
       const generateDateRange = (start: string, end: string): string[] => {
         const dateArray: string[] = [];
         const currentDate = new Date(start);
 
         while (currentDate <= new Date(end)) {
-          dateArray.push(currentDate.toISOString().split('T')[0]);
+          dateArray.push(currentDate.toISOString().split('T')[0].split('-').join('/'));
           currentDate.setDate(currentDate.getDate() + 1);
         }
 
@@ -30,7 +32,7 @@ function App() {
 
       const fetchExchangeRates = async () => {
         try {
-          const dateRange = generateDateRange(startDate, endDate);
+          const dateRange = generateDateRange(formateStartDate, formattedEndDate);
 
           const exchangeRatesPromises = dateRange.map(async (date) => {
             const rates = await getHistoricalExchangeRates("USD", targetCurrencies, date);
@@ -45,6 +47,7 @@ function App() {
       };
 
       fetchExchangeRates();
+
     }
   }, [startDate, endDate]);
 
@@ -65,7 +68,7 @@ function App() {
         {/* Currency exchange table  */}
         <table>
           <caption>
-            {`Currency exchange table ${startDate && endDate ? `from ${startDate} to ${endDate}` : ""} `}
+            {`Currency exchange table ${exchangeRates && startDate && endDate ? `from ${startDate} to ${endDate}` : ""} `}
           </caption>
           <thead>
             <tr>
