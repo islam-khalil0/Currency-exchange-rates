@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { useState } from "react";
 
 const API_KEY = "f1a76583ccde513b0d830566";
 const BASE_URL = "https://v6.exchangerate-api.com/v6";
@@ -33,3 +34,4 @@ export const getHistoricalExchangeRates = async (
     throw error;
   }
 };
+

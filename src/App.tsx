@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { getHistoricalExchangeRates } from './api';
+import axios from "axios";
 
 interface ExchangeRate {
   date: string;
@@ -15,6 +16,11 @@ function App() {
   const formattedEndDate = endDate.split('-').join('/');
   const targetCurrencies: string[] = ["EGP", "CAD"];
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+
+
+  const [pricesData, setPricesData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
 
   useEffect(() => {
     if (formateStartDate && formattedEndDate) {
@@ -51,10 +57,29 @@ function App() {
     }
   }, [startDate, endDate]);
 
+
+
+  const getCurrencyExchangeRates = async () => {
+    try {
+      const responseCurrencyExchangeRates = await axios.get(
+        "https://v6.exchangerate-api.com/v6/f1a76583ccde513b0d830566/latest/USD"
+      );
+      const ExchangePrices = responseCurrencyExchangeRates.data.conversion_rates;
+      setPricesData(ExchangePrices);
+    } catch (error) {
+      console.error("Error in fetching currency exchange rates:", error);
+    }
+  };
+
+  useEffect(() => {
+    getCurrencyExchangeRates();
+  }, []);
+
+
   return (
     <>
       <div className='container'>
-        <h1>Currency Exchange Rates</h1>
+        {/* <h1>Currency exchange rates dates</h1>
         <form>
           <div className="input-group">
             <label htmlFor="startDate">Start Date:</label>
@@ -64,9 +89,9 @@ function App() {
             <label htmlFor="endDate">End Date:</label>
             <input type='date' id="endDate" value={endDate} onChange={(date) => setEndDate(date.target.value)} required />
           </div>
-        </form>
+        </form> */}
         {/* Currency exchange table  */}
-        <table>
+        {/* <table>
           <caption>
             {`Currency exchange table ${exchangeRates && startDate && endDate ? `from ${startDate} to ${endDate}` : ""} `}
           </caption>
@@ -86,7 +111,53 @@ function App() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+
+        {/* Currency Exchange Rates Compared to USD */}
+        <h1>Currency Exchange Rates Compared to USD</h1>
+        <div className="input-group">
+          <label htmlFor="searchCurrency">Search Currency:</label>
+          <input
+            placeholder='EGP'
+            type="text"
+            id="searchCurrency"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </div>
+        {
+          pricesData && (
+            <table>
+              <caption>
+                Currency exchange table
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">currency</th>
+                  <th scope="col">Exchange rate now</th>
+                </tr>
+              </thead>
+              <tbody>
+                {searchTerm === "" ?
+                  Object.entries(pricesData).map(([currency, exchangeRate], index) => (
+                    <tr key={index}>
+                      <td>{currency}</td>
+                      <td>{exchangeRate}</td>
+                    </tr>
+                  ))
+                  : Object.entries(pricesData)
+                    .filter(([currency]) => currency.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .map(([currency, exchangeRate], index) => (
+                      <tr key={index}>
+                        <td>{currency}</td>
+                        <td>{exchangeRate}</td>
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
+          )
+        }
+
       </div>
     </>
   );
