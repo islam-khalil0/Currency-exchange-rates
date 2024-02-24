@@ -1,61 +1,61 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { getHistoricalExchangeRates } from './api';
+// import { getHistoricalExchangeRates } from './api';
 import axios from "axios";
 
-interface ExchangeRate {
-  date: string;
-  EGP: number;
-  CAD: number;
-}
+// interface ExchangeRate {
+//   date: string;
+//   EGP: number;
+//   CAD: number;
+// }
 
 function App() {
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const formateStartDate = startDate.split('-').join('/');
-  const formattedEndDate = endDate.split('-').join('/');
-  const targetCurrencies: string[] = ["EGP", "CAD"];
-  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  // const [startDate, setStartDate] = useState<string>("");
+  // const [endDate, setEndDate] = useState<string>("");
+  // const formateStartDate = startDate.split('-').join('/');
+  // const formattedEndDate = endDate.split('-').join('/');
+  // const targetCurrencies: string[] = ["EGP", "CAD"];
+  // const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
 
 
   const [pricesData, setPricesData] = useState([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
 
-  useEffect(() => {
-    if (formateStartDate && formattedEndDate) {
-      const generateDateRange = (start: string, end: string): string[] => {
-        const dateArray: string[] = [];
-        const currentDate = new Date(start);
+  // useEffect(() => {
+  //   if (formateStartDate && formattedEndDate) {
+  //     const generateDateRange = (start: string, end: string): string[] => {
+  //       const dateArray: string[] = [];
+  //       const currentDate = new Date(start);
 
-        while (currentDate <= new Date(end)) {
-          dateArray.push(currentDate.toISOString().split('T')[0].split('-').join('/'));
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
+  //       while (currentDate <= new Date(end)) {
+  //         dateArray.push(currentDate.toISOString().split('T')[0].split('-').join('/'));
+  //         currentDate.setDate(currentDate.getDate() + 1);
+  //       }
 
-        return dateArray;
-      };
+  //       return dateArray;
+  //     };
 
-      const fetchExchangeRates = async () => {
-        try {
-          const dateRange = generateDateRange(formateStartDate, formattedEndDate);
+  //     const fetchExchangeRates = async () => {
+  //       try {
+  //         const dateRange = generateDateRange(formateStartDate, formattedEndDate);
 
-          const exchangeRatesPromises = dateRange.map(async (date) => {
-            const rates = await getHistoricalExchangeRates("USD", targetCurrencies, date);
-            return { date, ...rates } as ExchangeRate;
-          });
+  //         const exchangeRatesPromises = dateRange.map(async (date) => {
+  //           const rates = await getHistoricalExchangeRates("USD", targetCurrencies, date);
+  //           return { date, ...rates } as ExchangeRate;
+  //         });
 
-          const resolvedExchangeRates = await Promise.all(exchangeRatesPromises);
-          setExchangeRates(resolvedExchangeRates);
-        } catch (error) {
-          console.error('Error fetching exchange rates:', error);
-        }
-      };
+  //         const resolvedExchangeRates = await Promise.all(exchangeRatesPromises);
+  //         setExchangeRates(resolvedExchangeRates);
+  //       } catch (error) {
+  //         console.error('Error fetching exchange rates:', error);
+  //       }
+  //     };
 
-      fetchExchangeRates();
+  //     fetchExchangeRates();
 
-    }
-  }, [startDate, endDate]);
+  //   }
+  // }, [startDate, endDate]);
 
 
 
